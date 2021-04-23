@@ -30,10 +30,32 @@ plt.rcParams.update({
 
 class HarpPlot:
 
-    def __init__(self, filename, chromosome):
+    def __init__(self, chromosome):
         """Gets the list of positions from the file"""
-        self.filename = filename
+        self.filename = None
         self.chromosome = chromosome
+        self.comb_ax_dict = {'Gen0A_combined.freqs': (0, 0), 'Gen0B_combined.freqs': (0, 0),
+                             'Gen15CtrlA_combined.freqs': (0, 1), 'Gen15CtrlB_combined.freqs': (0, 1),
+                             'Gen15Dwn1A_combined.freqs': (2, 0), 'Gen15Dwn1B_combined.freqs': (2, 0),
+                             'Gen15Dwn2A_combined.freqs': (2, 1), 'Gen15Dwn2B_combined.freqs': (2, 1),
+                             'Gen15Up1A_combined.freqs': (1, 0), 'Gen15Up1B_combined.freqs': (1, 0),
+                             'Gen15Up2A_combined.freqs': (1, 1), 'Gen15Up2B_combined.freqs': (1, 1)}
+        self.positions = None
+        self.start_position = None
+        self.final_position = None
+        self.title = None
+        self.x_axis_label = 'Genomic Coordinate: Chromosome Arm {}'.format(self.chromosome)
+        self.row_range_list = None
+        self.col_dict = None
+        self.colormap = None
+        self.ax = None
+        self.fig = None
+        self.ymax = None
+        self.dgrp_number_of_lines = None
+        # self.graph_file = '{}_frequencies.png'.format('Haplotype')
+
+    def take_data(self, filename):
+        self.filename = filename
         # TODO: need to change this, graphing will need to be done on my machine, ohta doesn't have matplotlib
         with open(self.filename) as f:
             data = [line.rstrip('\n') for line in f]
@@ -47,7 +69,6 @@ class HarpPlot:
                 self.title = 'Generation 0 ReplicateA'
             if 'B' in self.filename:
                 self.title = 'Generation 0 ReplicateB'
-        self.x_axis_label = 'Genomic Coordinate: Chromosome Arm {}'.format(self.chromosome)
         # not going to add 1, that way x coordinates won't double up
         self.row_range_list = [range(position, self.positions[i + 1]) for i, position in enumerate(self.positions[:-1])]
         # need to add the range for the final element in self.positions list (last line of file)
@@ -61,14 +82,10 @@ class HarpPlot:
             for line in data:
                 freq_list.append(round(float(line.split(',')[key]), 4))
             self.col_dict[key] = freq_list
-        self.fig = None
-        self.ax = None
-        self.ymax = None
         # adding colors consistent coloring
         self.dgrp_number_of_lines = len(list(self.col_dict.keys()))
         cm_subsection = linspace(0, 1, self.dgrp_number_of_lines)
         self.colormap = [cm.gist_rainbow(x) for x in cm_subsection]
-        self.graph_file = '{}_frequencies.png'.format(self.filename.split('_')[0])
 
     def find_ymax(self):
         max_val = 0
@@ -83,31 +100,50 @@ class HarpPlot:
     def easy_ymax(self):
         self.ymax = 1.0
 
-    def plot(self):
-        self.fig, self.ax = plt.subplots(nrows=1, ncols=1, figsize=(40, 30))
-        self.ax.set_ylim([0, self.ymax + 0.05])
+    def plot(self, rowcol_tup):
+        row = rowcol_tup[0]
+        col = rowcol_tup[1]
+        self.easy_ymax()
+        self.ax[row, col].set_ylim([0, self.ymax + 0.05])
         xlim = len(range(1, 1000)) * len(self.row_range_list)
-        self.ax.set_xlim([1, xlim])
-        self.ax.set_title(self.title, fontsize=20)
+        self.ax[row, col].set_xlim([1, xlim])
+        self.ax[row, col].set_title(self.title, fontsize=30)
         for key, color_iterator in zip(self.col_dict.keys(), self.colormap):
             y_data = list()
             for rng, freq in zip(self.row_range_list, self.col_dict[key]):
                 y_data.extend([freq for _ in range(1, 1000)])
-            self.ax.plot(range(1, xlim + 1), y_data, color=color_iterator, linewidth=5.0)
-        # self.ax.set_xticks([idx for idx, s in enumerate(self.positions)])
+            self.ax[row, col].plot(range(1, xlim + 1), y_data, color=color_iterator, linewidth=3.0)
+        # self.ax[row, col].set_xticks([idx for idx, s in enumerate(self.positions)])
         xticks = list(range(1, xlim, 1000))
         xticklables = ["{:,}".format(x) for x in self.positions]
         # yrange = range(0, self.ymax + 0.05, 0)
         # yticks = [0.2, 0.4, 0.6, 0.8]
         # yticklabels = ['0.2', '0.4', '0.6', '0.8']
-        self.ax.set_xticks(xticks[0::10])
-        self.ax.set_xticklabels(xticklables[0::10])
-        # self.ax.set_yticks(yticks)
-        # self.ax.set_yticklabels(yticklabels)
-        plt.setp(self.ax.get_xticklabels(), fontsize=10)
-        plt.setp(self.ax.get_yticklabels(), fontsize=14)
-        self.ax.set_ylabel('Founding Simulans Haplotype Frequencies', fontsize=16)
-        self.ax.set_xlabel(self.x_axis_label, fontsize=15)
+        self.ax[row, col].set_xticks(xticks[0::12])
+        self.ax[row, col].set_xticklabels(xticklables[0::12])
+        # self.ax[row, col].set_yticks(yticks)
+        # self.ax[row, col].set_yticklabels(yticklabels)
+        plt.setp(self.ax[row, col].get_xticklabels(), fontsize=20)
+        plt.setp(self.ax[row, col].get_yticklabels(), fontsize=20)
+        self.ax[row, col].set_ylabel('Pooled DGRP Haplotype Frequencies', fontsize=25)
+        self.ax[row, col].set_xlabel(self.x_axis_label, fontsize=25)
+
+    def plots(self, replicate='A'):
+        self.fig, self.ax = plt.subplots(nrows=3, ncols=2, figsize=(50, 40))
+        if replicate == 'A':
+            fkeys = [key for key in self.comb_ax_dict.keys() if 'A_' in key]
+            graph_file = 'RepA_Haplotype_Frequencies.png'
+        else:
+            fkeys = [key for key in self.comb_ax_dict.keys() if 'B_' in key]
+            graph_file = 'RepB_Haplotype_Frequencies.png'
+
+        for key in fkeys:
+            inputfile = key
+            intuple = self.comb_ax_dict[key]
+            self.take_data(inputfile)
+            self.plot(intuple)
+        self.fig.savefig(graph_file, bbox_inches='tight')
+        plt.clf()
 
 
 # TODO: Easy and Find ymax are here
@@ -129,5 +165,6 @@ if __name__ == '__main__':
     #     combined_files = glob.glob('*combined.freqs')
     #     plot_freqs(combined_files, '2R')
     os.chdir(r'C:\Users\ltjon\Data\Mel2018_Experimental_Haplotype_Graphs\2L_1000000-12000000\Exp_Haplotype_Frequency_Estimates')
-    combined_files = glob.glob('*combined.freqs')
-    plot_freqs(combined_files, '2R')
+    hplt = HarpPlot('2L')
+    hplt.plots(replicate='A')
+    hplt.plots(replicate='B')
