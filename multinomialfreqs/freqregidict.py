@@ -7,9 +7,9 @@ from . import drawhaplotypes as dp
 class FreqDict:
     """Dictionary of estimated harp frequencies at region intervals"""
 
-    def __init__(self):
-        self.repAfile = 'replicateA_frequencies.txt'
-        self.repBfile = 'replicateB_frequencies.txt'
+    def __init__(self, contig, pos1, pos2):
+        self.repAfile = 'results/{}_{}-{}/replicateA_frequencies.txt'.format(contig, pos1, pos2)
+        self.repBfile = 'results/{}_{}-{}/replicateB_frequencies.txt'.format(contig, pos1, pos2)
         self.A = {line.split(',')[0]: line.rstrip('\n').split(',')[1:] for line in open(self.repAfile)}
         self.B = {line.split(',')[0]: line.rstrip('\n').split(',')[1:] for line in open(self.repBfile)}
 

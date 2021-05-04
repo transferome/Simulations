@@ -16,11 +16,11 @@ class AvgFst:
     """Calculates Average Fst for each region file and adds it to a list
     Methods for working with that list object into a data file"""
 
-    def __init__(self, blueprint):
+    def __init__(self, contig, pos1, pos2):
         """Sets up an id tag simulation_window given the blueprint,
         also a keyword argument that will be within or between"""
-        self.contig = blueprint.chromosome
-        self.window = blueprint.window
+        self.contig = contig
+        self.window = (pos1, pos2)
         self.simulation_window = '{}_{}-{}'.format(self.contig, str(self.window[0]), str(self.window[1]))
         self.repAwithins = None
         self.repBwithins = None

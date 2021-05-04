@@ -1,14 +1,14 @@
-"""Tag class to handle simreads branch of code"""
+"""Tag class to handle simulatereads branch of code"""
 import harpsnp.snp_region_min_max as minmax
 
 
 class SimreadsTag:
     """Tags for Running Simreads command"""
-    # class attribute to count number of simreads runs
+    # class attribute to count number of simulatereads runs
     numInstances = 0
 
-    def __init__(self, constructor_tag):
-        """Take constructor_tag to retain simulation info, and setup simreads program"""
+    def __init__(self, constructor_tag, pos1, pos2):
+        """Take constructor_tag to retain simulation info, and setup simulatereads program"""
         # add 1 to the number of instances when object is created
         SimreadsTag.numInstances = SimreadsTag.numInstances + 1
         self.tag = constructor_tag.tag
@@ -30,8 +30,8 @@ class SimreadsTag:
         self.hlk_file = '{}.hlk'.format(self.harp_tag)
         self.freq_file = '{}.freqs'.format(self.harp_tag)
         self.founding_frequency = None
-        self.founding_frequency_file = '{}-{}_Gen0Rep{}.freqs'.format(str(self.region[0]),
-                                                                      str(self.region[1]), self.replicate)
+        self.founding_frequency_file = 'results/{}_{}-{}/SourceData_Exp_Haplotype_Frequencies/{}-{}_Gen0Rep{}.freqs'.format(
+            self.contig, pos1, pos2, str(self.region[0]), str(self.region[1]), self.replicate)
         with open(self.founding_frequency_file) as foundfile:
             for line in foundfile:
                 if line.startswith('mean'):
@@ -44,7 +44,7 @@ class SimreadsTag:
 
     def get_simulated_frequencies(self):
         """This gets the mean frequencies from the frequencies simulated by harp at
-        the end of the simulation and simreads.  This frequency is what will be compared to
+        the end of the simulation and simulatereads.  This frequency is what will be compared to
         the founding frequency to make a statistic about haplotype frequency change given
         the simulation parameters"""
         with open(self.freq_file) as freqfile:

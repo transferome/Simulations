@@ -1,10 +1,10 @@
-"""Calculates Fst between the up, down simulated frequencies held in the simreads tags
+"""Calculates Fst between the up, down simulated frequencies held in the simulatereads tags
 as the final_frequency_file.  First line in file is gen0 so it is ignored"""
 import fst.fstcalculate as fstcalc
 
 
 def pair_simulated_frequencies(simreads_tag):
-    """Opens the simreads final freq file and pairs the up and down into a list"""
+    """Opens the simulatereads final freq file and pairs the up and down into a list"""
     with open(simreads_tag.final_frequency_file) as file:
         data = [line.rstrip('\n') for line in file][1:]
         # use even and odd to make pairs

@@ -5,8 +5,8 @@ import harpsnp.harpclean as mover
 
 class EndFreqs:
 
-    def __init__(self, blueprint):
-        mover.move_freq(blueprint)
+    def __init__(self):
+        mover.move_freq()
         all_freqs = glob.glob('{}/*_Gen15_*.freqs'.format(cdir.expfreq_dir()))
         self.freq_dict = {'Gen15Up1A': None, 'Gen15Up2A': None,
                           'Gen15Dwn1A': None, 'Gen15Dwn2A': None,
@@ -34,9 +34,9 @@ class EndFreqs:
         return self.output_files + ['Gen0A_combined.freqs', 'Gen0B_combined.freqs']
 
 
-def endfreqs(blueprint):
+def endfreqs():
     """Function that a simulation run will use to handle the EndFreqs class"""
-    endfreqobj = EndFreqs(blueprint)
+    endfreqobj = EndFreqs()
     endfreqobj.combine()
     return endfreqobj.return_files()
 

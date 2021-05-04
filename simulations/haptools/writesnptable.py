@@ -1,8 +1,8 @@
-"""Writes out the constructed haplotypes in a SNP file acceptable to simreads"""
+"""Writes out the constructed haplotypes in a SNP file acceptable to simulatereads"""
 
 
 def write_snp_table(hapfile, final_haplotypes, constructor_tag):
-    """Write the snp_table needed for simreads"""
+    """Write the snp_table needed for simulatereads"""
     indi_nums = range(1, len(final_haplotypes[0].split(',')) + 1)
     indi_strs = [str(x) for x in indi_nums]
     indi_line = ','.join(indi_strs)

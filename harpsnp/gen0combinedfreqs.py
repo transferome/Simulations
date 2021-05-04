@@ -1,4 +1,4 @@
-"""  Organize the mean frequency of the haplotypes at generation 0 using the simreads tags
+"""  Organize the mean frequency of the haplotypes at generation 0 using the simulatereads tags
   needs to be used after the simread_sumfreq.py module"""
 
 # class object will take the blueprint, replicate, and simreadstags

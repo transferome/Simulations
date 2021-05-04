@@ -20,7 +20,7 @@ def bamremover():
         os.remove(file)
 
 
-def move_freq(blueprint):
+def move_freq():
     endir = cdir.expfreq_dir()
     freqs = glob.glob('*Gen15*.freqs')
     for freq in freqs:
@@ -41,7 +41,7 @@ class HarpEndClean:
     def __init__(self, blueprint):
         output_directories = glob.glob('*Gen15*.output')
         remover(output_directories)
-        move_freq(blueprint)
+        move_freq()
 
 
 class SimClean(InitialClean):

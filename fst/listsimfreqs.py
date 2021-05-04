@@ -1,4 +1,4 @@
-"""Need a module to list the simulation.freq files created by the simreads simulations.
+"""Need a module to list the simulation.freq files created by the simulatereads simulations.
 I also need to pair those files together, region 8291027-8388036 has two files, a repA and a repB.
 Each line of the paired files gets compared using fst"""
 import glob

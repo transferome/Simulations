@@ -19,7 +19,7 @@ def harp_final(blueprint):
     endfreq.sumf()
     subsetter.gather_end()
     fst.endfst()
-    combined_files = combiner.endfreqs(blueprint)
+    combined_files = combiner.endfreqs()
     mover.combinemove(blueprint, combined_files)
 
 
