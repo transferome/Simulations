@@ -1,13 +1,39 @@
 """  Finds the average fst value for each simulated region  """
 import fst.listfst as lister
+import numpy as np
+
+
+def fstopen(fstfile):
+    with open(fstfile) as f:
+        fstlist = [float(line.rstrip('\n').split(',')[1]) for line in f]
+    return fstlist
 
 
 # function finds the average Fst within a between or within .txt file
-def avgfst(fstfile):
+def avgfst_between(fstfile):
     """Return the mean fst from an fst file"""
-    with open(fstfile) as f:
-        fstlist = [float(line.rstrip('\n').split(',')[1]) for line in f]
+    fstlist = fstopen(fstfile)
     return str(round(sum(fstlist)/len(fstlist), 8))
+
+
+def varfst_between(fstfile):
+    """Return the variance in fst from an fst file"""
+    fstlist = fstopen(fstfile)
+    return str(round(float(np.var(fstlist, ddof=1)), 8))
+
+
+def avgfst_within(fst1, fst2):
+    fstlist1 = fstopen(fst1)
+    fstlist2 = fstopen(fst2)
+    fstlist = fstlist1 + fstlist2
+    return str(round(sum(fstlist)/len(fstlist), 8))
+
+
+def varfst_within(fst1, fst2):
+    fstlist1 = fstopen(fst1)
+    fstlist2 = fstopen(fst2)
+    fstlist = fstlist1 + fstlist2
+    return str(round(float(np.var(fstlist, ddof=1)), 8))
 
 
 # this will take the blueprint object, which holds the information on the
@@ -26,7 +52,7 @@ class AvgFst:
         self.repBwithins = None
         self.betweens = None
         self.regions = None
-        self.fst_data = ['region,withinRepAFst,withinRepBFst,betweenFst\n']
+        self.fst_data = ['region,withinFst_mean,betweenFst_mean,withinFst_var,betweenFst_var\n']
 
     def files_regions(self):
         """ Gets the files"""
@@ -37,7 +63,8 @@ class AvgFst:
 
     def gather_data(self):
         for w, x, y, z in zip(self.regions, self.repAwithins, self.repBwithins, self.betweens):
-            self.fst_data.append('{}\n'.format(','.join([w, avgfst(x), avgfst(y), avgfst(z)])))
+            self.fst_data.append('{}\n'.format(','.join([w, avgfst_within(x, y), avgfst_between(z), varfst_within(x, y),
+                                                         varfst_between(z)])))
 
     def write_sum(self):
         """Writes out fstdata, 1 is repa within, 1 is repb within, final is

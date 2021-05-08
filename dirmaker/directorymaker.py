@@ -35,5 +35,14 @@ def exp_haplotype_estimate_dir():
     return creator(path)
 
 
+def simulation_output_dir():
+    path = 'Sim_Frequencies_Fst'
+    return creator(path)
+
+
+def results_experimental_dir(cont, pos1, pos2):
+    return 'results/{}_{}-{}/Exp_Haplotype_Frequency_Estimates'.format(cont, str(pos1), str(pos2))
+
+
 if __name__ == '__main__':
     pass

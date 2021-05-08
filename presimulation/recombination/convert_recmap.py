@@ -92,4 +92,5 @@ def print_filename(chr_arm):
 
 
 if __name__ == '__main__':
-    test = main_recmap([2000000, 4000000], '3L')
+    pass
+    # test = main_recmap([2000000, 4000000], '3L')

@@ -11,7 +11,7 @@ def clean():
         file_list = glob.glob('{}/*'.format(folder))
         init_true = 0
         for f in file_list:
-            if 'fstsimulate.py' in f:
+            if '__init__.py' in f:
                 init_true += 1
         if not init_true:
             shutil.rmtree(folder)

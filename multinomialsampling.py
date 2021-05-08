@@ -4,6 +4,8 @@ import multinomialfreqs.foundinghaplotypesampling as sampler
 import simulations.processtags as mainsim
 import simulations.subregionprocess as subsim
 import simulations.simfst.fstsimulate as fst
+import dirmaker.foldermove as mover
+import divergence.expdivergence as expdiv
 
 
 def main(contig, pos1, pos2, simulation_pairnumber):
@@ -17,6 +19,12 @@ def main(contig, pos1, pos2, simulation_pairnumber):
 def sim_fst(contig, pos1, pos2):
     fst.fst_betweenreplicate()
     fst.average_fst(contig, pos1, pos2)
+    mover.simulation_move(contig, pos1, pos2)
+    mover.output_remove()
+
+
+def expdivergence(contig, pos1, pos2):
+    expdiv.write_divergence(contig, pos1, pos2)
 
 
 if __name__ == '__main__':
@@ -27,6 +35,9 @@ if __name__ == '__main__':
     # parser.add_argument("-e", '--end', help='end position')
     # parser.add_argument('-n', '--number', help='number of recombination simulations')
     # args = parser.parse_args()
-    cont = '2L'
-    main(cont, 4000000, 20000000, 100)
-    sim_fst(cont, 4000000, 20000000)
+    cont = '2R'
+    pos1 = 5000000
+    pos2 = 22000000
+    main(cont, pos1, pos2, 5)
+    sim_fst(cont, pos1, pos2)
+    expdivergence(cont, pos1, pos2)
