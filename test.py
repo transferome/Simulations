@@ -1,5 +1,5 @@
-import divergence.expdivergence as exp
+import divergence.simdivergence as divg
 
 
 if __name__ == '__main__':
-    exp.write_divergence('2L', 2000000, 21000000)
+    divg.simdiverge('2L', 2000000, 21000000)
