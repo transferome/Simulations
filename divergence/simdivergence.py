@@ -11,4 +11,4 @@ def region_and_file(freqfile):
 
 def create_dict(freqfile):
     with open(freqfile) as f:
-        [line.rstrip('\n') for line in freqfile]
+        [line.rstrip('\n') for line in frepyqfile]
