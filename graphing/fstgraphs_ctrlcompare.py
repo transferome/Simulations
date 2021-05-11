@@ -76,7 +76,7 @@ class FstClass:
         self.expdatDwnA2 = 'Exp_Dwn2A_CtrlA_Fst.dat'
         self.expdatDwnB1 = 'Exp_Dwn1B_CtrlB_Fst.dat'
         self.expdatDwnB2 = 'Exp_Dwn2B_CtrlB_Fst.dat'
-        # self.cdat = 'Exp_CtrlA_CtrlB_Fst.dat'
+        self.cdat = 'Exp_CtrlA_CtrlB_Fst.dat'
         self.simdat = glob.glob('*_Simulation_Fst.dat')[0]
         self.region = None
         self.expdatUpA1obj = FstData(self.expdatUpA1, self.chromosome)
@@ -87,7 +87,7 @@ class FstClass:
         self.expdatDwnA2obj = FstData(self.expdatDwnA2, self.chromosome)
         self.expdatDwnB1obj = FstData(self.expdatDwnB1, self.chromosome)
         self.expdatDwnB2obj = FstData(self.expdatDwnB2, self.chromosome)
-        # self.cdatobj = FstData(self.cdat, self.chromosome)
+        self.cdatobj = FstData(self.cdat, self.chromosome)
         self.simdatobj = FstData(self.simdat, self.chromosome, simulated=True)
 
         if self.expdatUpA1obj.region == self.expdatDwnB2obj.region:
@@ -107,7 +107,7 @@ class FstClass:
         self.expdatDwnA2obj.dictionary()
         self.expdatDwnB1obj.dictionary()
         self.expdatDwnB2obj.dictionary()
-        # self.cdatobj.dictionary()
+        self.cdatobj.dictionary()
         self.simdatobj.dictionary()
 
         self.range_list = list()
@@ -127,7 +127,7 @@ class FstClass:
         self.expdatUpBcolormap = ['mediumslateblue']
         self.expdatDwnAcolormap = ['orange']
         self.expdatDwnBcolormap = ['mediumorchid']
-        # self.ctrlcolormap = ['orangered']
+        self.ctrlcolormap = ['limegreen']
         # self.expdatUpBcolormap = ['pink']
         # self.expdatDwnAcolormap = ['chartreuse']
         # self.expdatDwnBcolormap = ['yellowgreen']
@@ -158,7 +158,7 @@ class FstClass:
                       linewidth=3.5)
 
     def plot(self):
-        self.fig, self.ax = plt.subplots(nrows=1, ncols=2, figsize=(30, 10))
+        self.fig, self.ax = plt.subplots(nrows=1, ncols=2, figsize=(40, 10))
         self.ax[0].set_ylim([0, self.ymax + 0.05])
         self.ax[1].set_ylim([0, self.ymax + 0.05])
 
@@ -174,19 +174,23 @@ class FstClass:
         self.plotfst(self.ax[1], self.expdatDwnA2obj.dict, self.expdatDwnAcolormap, xlim, 0.5)
         self.plotfst(self.ax[1], self.expdatDwnB1obj.dict, self.expdatDwnBcolormap, xlim, 1.0)
         self.plotfst(self.ax[1], self.expdatDwnB2obj.dict, self.expdatDwnBcolormap, xlim, 0.5)
-        self.plotfst(self.ax[0], self.simdatobj.dict, self.simcolormap, xlim, 1.0, '--')
-        self.plotfst(self.ax[1], self.simdatobj.dict, self.simcolormap, xlim, 1.0, '--')
-
-        # self.plotfst(self.ax, self.cdatobj.dict, self.ctrlcolormap, xlim, 0.8, '--')
+        self.plotfst(self.ax[0], self.simdatobj.dict, self.simcolormap, xlim, 0.6)
+        self.plotfst(self.ax[1], self.simdatobj.dict, self.simcolormap, xlim, 0.6)
+        self.plotfst(self.ax[0], self.cdatobj.dict, self.ctrlcolormap, xlim, 1.0, '--')
+        self.plotfst(self.ax[1], self.cdatobj.dict, self.ctrlcolormap, xlim, 1.0, '--')
 
         custom_lines1 = [Line2D([0], [0], color='orangered', lw=4, label='Up 1A'),
                          Line2D([0], [0], color='orangered', lw=4, alpha=0.5, label='Up 2A'),
                          Line2D([0], [0], color='mediumslateblue', lw=4, label='Up 1B'),
-                         Line2D([0], [0], color='mediumslateblue', lw=4, alpha=0.5, label='Up 2B')]
+                         Line2D([0], [0], color='mediumslateblue', lw=4, alpha=0.5, label='Up 2B'),
+                         Line2D([0], [0], color='limegreen', lw=4, alpha=1.0, linestyle='--', label='Control'),
+                         Line2D([0], [0], color='honeydew', lw=4, alpha=0.6, label='Simulations')]
         custom_lines2 = [Line2D([0], [0], color='orange', lw=4, label='Down 1A'),
                          Line2D([0], [0], color='orange', lw=4, alpha=0.5, label='Down 2A'),
                          Line2D([0], [0], color='mediumorchid', lw=4, label='Down 1B'),
-                         Line2D([0], [0], color='mediumorchid', lw=4, alpha=0.5, label='Down 2B')]
+                         Line2D([0], [0], color='mediumorchid', lw=4, alpha=0.5, label='Down 2B'),
+                         Line2D([0], [0], color='limegreen', lw=4, alpha=1.0, linestyle='--', label='Control'),
+                         Line2D([0], [0], color='honeydew', lw=4, alpha=0.6, label='Simulations')]
         # self.ax.set_xticks([idx for idx, s in enumerate(self.positions)])
         xticks = list(range(1, xlim, 1000))
         xticklables = ["{:,}".format(x) for x in self.expdatUpA1obj.pos1]
@@ -199,14 +203,14 @@ class FstClass:
         plt.setp(legen1.get_texts(), color='w')
         plt.setp(legen2.get_texts(), color='w')
 
-        self.ax[0].set_xticks(xticks[0::10])
-        self.ax[0].set_xticklabels(xticklables[0::10])
+        self.ax[0].set_xticks(xticks[0::20])
+        self.ax[0].set_xticklabels(xticklables[0::20])
         plt.setp(self.ax[0].get_xticklabels(), fontsize=10)
         plt.setp(self.ax[0].get_yticklabels(), fontsize=13)
         self.ax[0].set_ylabel(self.y_label, fontsize=15)
         self.ax[0].set_xlabel(self.x_label, fontsize=15)
-        self.ax[1].set_xticks(xticks[0::10])
-        self.ax[1].set_xticklabels(xticklables[0::10])
+        self.ax[1].set_xticks(xticks[0::20])
+        self.ax[1].set_xticklabels(xticklables[0::20])
         plt.setp(self.ax[1].get_xticklabels(), fontsize=10)
         plt.setp(self.ax[1].get_yticklabels(), fontsize=13)
         # self.ax[1].set_ylabel(self.y_label, fontsize=17)
@@ -218,15 +222,15 @@ if __name__ == '__main__':
     contig = '2L'
     # listA = list(range(5, 32, 2))[:-1]
     # listB = list(range(5, 32, 2))[1:]
-    listA = [4]
-    listB = [20]
+    listA = [2]
+    listB = [21]
     # x2 = 3
     for x1, x2 in zip(listA, listB):
-        os.chdir(f'C:\\Users\\ltjon\\Data\\Mel2018_Experimental_Haplotype_Graphs\\{contig}_{x1}000000-{x2}000000\\Fst_data')
+        os.chdir(f'C:\\Users\\ltjon\\Dropbox\\Data\\Mel2018_Experimental_Haplotype_Graphs\\{contig}_{x1}000000-{x2}000000\\Fst_data')
         # os.chdir(f'/home/solid-snake/Data/mel_simulations2018/{contig}/testdat/{contig}_{x1}000000-{x2}000000_Fst')
         plotobj = FstClass(contig)
         plotobj.easy_ymax()
         plotobj.plot()
-        os.chdir('C:\\Users\\ltjon\\Data\\Mel2018_Experimental_Haplotype_Graphs')
+        os.chdir('C:\\Users\\ltjon\\Dropbox\\Data\\Mel2018_Experimental_Haplotype_Graphs')
         plotobj.fig.savefig(f'{contig}_{x1}Mbp-{x2}Mbp_Up_v_Down_Fst.png', bbox_inches='tight')
         plt.clf()
