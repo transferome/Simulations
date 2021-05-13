@@ -11,7 +11,7 @@ def like(simreads_tag):
                          '--region', simreads_tag.harp_region,
                          '--refseq', xfiles.reference, '--snps', xfiles.snps[simreads_tag.contig],
                          '--stem', simreads_tag.harp_tag]
-    print(harp_like_command)
+    # print(harp_like_command)
     subprocess.call(harp_like_command, shell=False)
 
 

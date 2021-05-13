@@ -1,16 +1,16 @@
 """  Dictionary to map samples to and chromosomes to different filenames 
 for Harp to use"""
-from . import resources
+from . import resource_dir
 
 
-snps = {'2L': '{}/2L_snp_good.txt'.format(resources),
-        '2R': '{}/2R_snp_good.txt'.format(resources),
-        '3L': '{}/3L_snp_good.txt'.format(resources),
-        '3R': '{}/3R_snp_good.txt'.format(resources)}
+snps = {'2L': '{}/2L_snp_good.txt'.format(resource_dir),
+        '2R': '{}/2R_snp_good.txt'.format(resource_dir),
+        '3L': '{}/3L_snp_good.txt'.format(resource_dir),
+        '3R': '{}/3R_snp_good.txt'.format(resource_dir)}
 
 
-bams_gen0 = {'Gen0A': '{}/S21_sorted_proper_realigned.bam'.format(resources),
-             'Gen0B': '{}/S22_sorted_proper_realigned.bam'.format(resources)}
+bams_gen0 = {'Gen0A': '{}/S21_sorted_proper_realigned.bam'.format(resource_dir),
+             'Gen0B': '{}/S22_sorted_proper_realigned.bam'.format(resource_dir)}
 
 
 bams = {'S1_sorted_proper_realigned.bam': 'Gen15Up1A', 'S2_sorted_proper_realigned.bam': 'Gen15Up2A',
@@ -21,7 +21,7 @@ bams = {'S1_sorted_proper_realigned.bam': 'Gen15Up1A', 'S2_sorted_proper_realign
         'S10_sorted_proper_realigned.bam': 'Gen15CtrlB'}
 
 
-reference = '{}/dmel-majchr-norm-r6.24.fasta'.format(resources)
+reference = '{}/dmel-majchr-norm-r6.24.fasta'.format(resource_dir)
 
 
 def dictmkr():

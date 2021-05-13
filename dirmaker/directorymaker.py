@@ -44,5 +44,10 @@ def results_experimental_dir(cont, pos1, pos2):
     return 'results/{}_{}-{}/Exp_Haplotype_Frequency_Estimates'.format(cont, str(pos1), str(pos2))
 
 
+def coverage_dir(contig, pos1, pos2):
+    path = 'results/{}_{}-{}/coverage'.format(contig, pos1, pos2)
+    return creator(path)
+
+
 if __name__ == '__main__':
     pass

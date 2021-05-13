@@ -2,7 +2,7 @@
 import subprocess
 from multiprocessing import Pool
 from functools import partial
-from . import resources
+from . import resource_dir
 from harpsnp.filedict import bams as sample_dict
 from harpsnp.filedict import reference as ref_file
 import harpsnp.filedict as xfiles
@@ -20,7 +20,7 @@ def like_process(chromosome, region, gen15_bam):
     """Execute harp like command and process on particular
     Generation 15 bam file"""
     # use rangesubset to get min max SNP positions
-    harp_like_command = ['harp', 'like', '--bam', '{}/{}'.format(resources, gen15_bam), '--region', region,
+    harp_like_command = ['harp', 'like', '--bam', '{}/{}'.format(resource_dir, gen15_bam), '--region', region,
                          '--refseq', ref_file, '--snps', xfiles.snps[chromosome], '--stem',
                          '{}_{}'.format(region, sample_dict[gen15_bam])]
     # print(harp_like_command)

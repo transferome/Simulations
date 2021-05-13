@@ -1,10 +1,10 @@
 """Count the number of snps within a particular region of a chromosome"""
-from . import resources
+from . import resource_dir
 
 
 def count_snps(chromosome, region):
     """Count number of snps"""
-    with open('{}/{}_snp_good.txt'.format(resources, chromosome)) as f:
+    with open('{}/{}_snp_good.txt'.format(resource_dir, chromosome)) as f:
         counter = 0
         for idx, line in enumerate(f):
             if idx > 0:
