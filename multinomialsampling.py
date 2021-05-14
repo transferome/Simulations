@@ -28,6 +28,8 @@ def expdivergence(contig, pos1, pos2):
 
 
 if __name__ == '__main__':
+    import time
+    start_time = time.time()
     # import argparse
     # parser = argparse.ArgumentParser(description="Presimulation: Estimation Windows Program")
     # parser.add_argument("-c", "--chr", help='chromosome')
@@ -38,6 +40,7 @@ if __name__ == '__main__':
     cont = '2R'
     pos1 = 4200000
     pos2 = 25258235
-    main(cont, pos1, pos2, 2)
+    main(cont, pos1, pos2, 50)
     sim_fst(cont, pos1, pos2)
     expdivergence(cont, pos1, pos2)
+    print("--- %s seconds ---" % (time.time() - start_time))

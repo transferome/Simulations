@@ -128,6 +128,6 @@ if __name__ == '__main__':
     #     os.chdir(folder)
     #     combined_files = glob.glob('*combined.freqs')
     #     plot_freqs(combined_files, '2R')
-    os.chdir(r'C:\Users\ltjon\Data\Mel2018_Experimental_Haplotype_Graphs\2L_1000000-12000000\Exp_Haplotype_Frequency_Estimates')
+    os.chdir(r'C:\Users\ltjon\Data\Mel2018_Experimental_Haplotype_Graphs\2L_500000-23093611\Exp_Haplotype_Frequency_Estimates')
     combined_files = glob.glob('*combined.freqs')
     plot_freqs(combined_files, '2R')

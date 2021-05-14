@@ -146,25 +146,25 @@ class HarpPlot:
         plt.clf()
 
 
-# TODO: Easy and Find ymax are here
-def plot_freqs(combined_file_list, chromosome):
-    for comb in combined_file_list:
-        hplot = HarpPlot(comb, chromosome)
-        hplot.easy_ymax()
-        hplot.plot()
-        hplot.fig.savefig(hplot.graph_file, bbox_inches='tight')
-        plt.clf()
+# # TODO: Easy and Find ymax are here
+# def plot_freqs(combined_file_list, chromosome):
+#     for comb in combined_file_list:
+#         hplot = HarpPlot(comb, chromosome)
+#         hplot.easy_ymax()
+#         hplot.plot()
+#         hplot.fig.savefig(hplot.graph_file, bbox_inches='tight')
+#         plt.clf()
 
 
 if __name__ == '__main__':
     import os
-    import glob
+    # import glob
     # graph_folders = glob.glob('/home/solid-snake/Data/sim_simulations2018/2R/testdat/*_data2graph')
     # for folder in graph_folders:
     #     os.chdir(folder)
     #     combined_files = glob.glob('*combined.freqs')
     #     plot_freqs(combined_files, '2R')
-    os.chdir(r'C:\Users\ltjon\Data\Mel2018_Experimental_Haplotype_Graphs\2L_1000000-12000000\Exp_Haplotype_Frequency_Estimates')
-    hplt = HarpPlot('2L')
+    os.chdir(r'C:\Users\ltjon\Data\Mel2018_Experimental_Haplotype_Graphs\2R_4200000-25258235\Exp_Haplotype_Frequency_Estimates')
+    hplt = HarpPlot('2R')
     hplt.plots(replicate='A')
     hplt.plots(replicate='B')
