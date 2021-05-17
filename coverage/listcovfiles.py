@@ -7,3 +7,12 @@ def listcov():
     covfiles = glob.glob(f'{resource_dir}/*.coverage')
     covfiles.sort(key=lambda x: int(x.split('_')[0].split('/')[-1].lstrip('S')))
     return covfiles
+
+
+def list_contig_files(contig):
+    covfiles = glob.glob(f'{resource_dir}/{contig}*.txt')
+    return covfiles
+
+
+if __name__ == '__main__':
+    list_contig_files('2L')

@@ -1,2 +1,3 @@
-from os import path
-resource_dir = path.join(path.dirname(__file__), 'resources')
+import pathlib
+resource_dir = pathlib.Path(__file__).parent.absolute().joinpath('resources')
+print(resource_dir)

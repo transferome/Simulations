@@ -32,10 +32,12 @@ plt.rcParams.update({
 class FstData:
     def __init__(self, fstfile, chromosome, simulated=False):
         self.data = None
+        self.simulated = False
         if not simulated:
             with open(fstfile) as f:
                 self.data = [line.rstrip('\n') for line in f]
         else:
+            self.simulated = True
             with open(fstfile) as f:
                 self.data = [line.rstrip('\n') for line in f if not line.startswith('region')]
         self.pos1 = [int(line.split(',')[0].split('-')[0]) for line in self.data]
@@ -123,7 +125,7 @@ class FstClass:
         self.fig = None
         self.ax = None
         self.ymax = None
-        self.simcolormap = ['honeydew', 'honeydew', 'honeydew']
+        self.simcolormap = ['honeydew']
         self.expdatAcolormap = ['orangered']
         self.expdatBcolormap = ['mediumslateblue']
         # self.expdatDwnAcolormap = ['orange']
@@ -158,19 +160,22 @@ class FstClass:
             axis.plot(range(1, xlimit + 1), y_data, color=color_iterator, linestyle=linetype, alpha=alpha_val,
                       linewidth=3.5)
 
-    def simfst(self, axis, datadict, coloriter, xlimit, alpha_val, linetype='-'):
-        for key, color_iterator in enumerate(coloriter, 1):
+    def simfst(self, axis, datadict, color_iterator, xlimit, alpha_val, linetype='-'):
+        for key in range(1, 3):
             y_data = list()
             e_data = list()
-            err_key = key + 3
-            err_list = datadict[key + 3]
+            # err_key = key + 3
+            err_list = datadict[key + 2]
             # TODO: sample size will change
-            errlst = [1.96*(math.sqrt(x)/math.sqrt(20)) for x in err_list]
+            errlst = [1.96*(math.sqrt(x)/math.sqrt(40)) for x in err_list]
             for rng, freq, er in zip(self.range_list, datadict[key], errlst):
                 y_data.extend([freq for _ in range(1, 1000)])
-                e_data.extend([er for _ in range(1, 1000)])
-            axis.errorbar(range(1, xlimit + 1), y_data, yerr=e_data, color=color_iterator, linestyle=linetype, alpha=alpha_val,
+                e_data.extend([(freq + er, freq - er) for _ in range(1, 1000)])
+            e_data0 = [tup[0] for tup in e_data]
+            e_data1 = [tup[1] for tup in e_data]
+            axis.plot(range(1, xlimit + 1), y_data, color=color_iterator[0], linestyle=linetype, alpha=alpha_val,
                       linewidth=3.5)
+            axis.fill_between(range(1, xlimit + 1), e_data0, e_data1, color=color_iterator, alpha=alpha_val)
 
     def plot(self):
         self.fig, self.ax = plt.subplots(nrows=1, ncols=2, figsize=(30, 10))
@@ -194,15 +199,14 @@ class FstClass:
         self.plotfst(self.ax[0], self.cdatobj.dict, self.ctrlcolormap, xlim, 0.8, '--')
         self.plotfst(self.ax[1], self.cdatobj.dict, self.ctrlcolormap, xlim, 0.8, '--')
 
-
         custom_lines1 = [Line2D([0], [0], color='orangered', lw=4, label='Up1A v Dwn1A'),
-                         Line2D([0], [0], color='orangered', lw=4, alpha=0.5, label='Up2A v Dwn2A')]
-                         # Line2D([0], [0], color='mediumslateblue', lw=4, label='Up 1B'),
-                         # Line2D([0], [0], color='mediumslateblue', lw=4, alpha=0.5, label='Up 2B')]
+                         Line2D([0], [0], color='orangered', lw=4, alpha=0.5, label='Up2A v Dwn2A'),
+                         Line2D([0], [0], color='navajowhite', lw=4, alpha=0.8, linestyle='--', label='Control'),
+                         Line2D([0], [0], color='honeydew', lw=4, alpha=0.8, label='Simulations')]
         custom_lines2 = [Line2D([0], [0], color='mediumslateblue', lw=4, label='Up1B v Dwn1B'),
-                         Line2D([0], [0], color='mediumslateblue', lw=4, alpha=0.5, label='Up2B v Dwn2B')]
-                         # Line2D([0], [0], color='mediumorchid', lw=4, label='Down 1B'),
-                         # Line2D([0], [0], color='mediumorchid', lw=4, alpha=0.5, label='Down 2B')]
+                         Line2D([0], [0], color='mediumslateblue', lw=4, alpha=0.5, label='Up2B v Dwn2B'),
+                         Line2D([0], [0], color='navajowhite', lw=4, linestyle='--', alpha=0.8, label='Control'),
+                         Line2D([0], [0], color='honeydew', lw=4, alpha=0.8, label='Simulations')]
         # self.ax.set_xticks([idx for idx, s in enumerate(self.positions)])
         xticks = list(range(1, xlim, 1000))
         xticklables = ["{:,}".format(x) for x in self.expdat1A_udobj.pos1]
@@ -215,14 +219,14 @@ class FstClass:
         plt.setp(legen1.get_texts(), color='w')
         plt.setp(legen2.get_texts(), color='w')
 
-        self.ax[0].set_xticks(xticks[0::10])
-        self.ax[0].set_xticklabels(xticklables[0::10])
+        self.ax[0].set_xticks(xticks[0::25])
+        self.ax[0].set_xticklabels(xticklables[0::25])
         plt.setp(self.ax[0].get_xticklabels(), fontsize=10)
         plt.setp(self.ax[0].get_yticklabels(), fontsize=13)
         self.ax[0].set_ylabel(self.y_label, fontsize=15)
         self.ax[0].set_xlabel(self.x_label, fontsize=15)
-        self.ax[1].set_xticks(xticks[0::10])
-        self.ax[1].set_xticklabels(xticklables[0::10])
+        self.ax[1].set_xticks(xticks[0::25])
+        self.ax[1].set_xticklabels(xticklables[0::25])
         plt.setp(self.ax[1].get_xticklabels(), fontsize=10)
         plt.setp(self.ax[1].get_yticklabels(), fontsize=13)
         # self.ax[1].set_ylabel(self.y_label, fontsize=17)
@@ -231,18 +235,18 @@ class FstClass:
 
 if __name__ == '__main__':
     import os
-    contig = '3L'
+    contig = '2L'
     # listA = list(range(5, 32, 2))[:-1]
     # listB = list(range(5, 32, 2))[1:]
-    listA = [1]
-    listB = [23]
+    x1 = 500000
+    x2 = 23093611
     # x2 = 3
-    for x1, x2 in zip(listA, listB):
-        os.chdir(f'C:\\Users\\ltjon\\Data\\Mel2018_Experimental_Haplotype_Graphs\\{contig}_{x1}000000-{x2}000000\\Fst_data')
-        # os.chdir(f'/home/solid-snake/Data/mel_simulations2018/{contig}/testdat/{contig}_{x1}000000-{x2}000000_Fst')
-        plotobj = FstClass(contig)
-        plotobj.easy_ymax()
-        plotobj.plot()
-        os.chdir('C:\\Users\\ltjon\\Data\\Mel2018_Experimental_Haplotype_Graphs')
-        plotobj.fig.savefig(f'{contig}_{x1}Mbp-{x2}Mbp_Up_v_Down_Fst.png', bbox_inches='tight')
-        plt.clf()
+    # for x1, x2 in zip(listA, listB):
+    os.chdir(f'C:\\Users\\ltjon\\Data\\Mel2018_Experimental_Haplotype_Graphs\\{contig}_{x1}-{x2}\\Fst_data')
+    # os.chdir(f'/home/solid-snake/Data/mel_simulations2018/{contig}/testdat/{contig}_{x1}000000-{x2}000000_Fst')
+    plotobj = FstClass(contig)
+    plotobj.easy_ymax()
+    plotobj.plot()
+    os.chdir(f'C:\\Users\\ltjon\\Data\\Mel2018_Experimental_Haplotype_Graphs\\{contig}_{x1}-{x2}')
+    plotobj.fig.savefig(f'{contig}_{x1}-{x2}_UpvDown_Fst.png', bbox_inches='tight')
+    plt.clf()
