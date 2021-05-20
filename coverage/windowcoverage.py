@@ -1,8 +1,11 @@
 """Module for Getting Coverage Statistics and Plots from a Coverage File"""
-from . import resource_dir
+# from . import resource_dir
+import subprocess
+from multiprocessing import Pool
+import glob
 import harpsnp.filedict as xfiles
 import dirmaker.directorymaker as cdir
-import coverage.listcovfiles as listcoveragefiles
+# import coverage.listcovfiles as listcoveragefiles
 
 
 def get_windows(contig, pos1, pos2):
@@ -15,51 +18,63 @@ def snp_positions(contig, blue_print_window):
     dgrp_pos = [int(line.split(',')[0]) for line in open(xfiles.snps[contig]) if not line.startswith(contig)]
     # the window will be a list of length two
     window_list = blue_print_window.lstrip('{}:'.format(contig)).split('-')
-    dgrp_pos_in_window = [x for x in dgrp_pos if int(window_list[0]) <= x <= int(window_list[1])]
+    # not including SNP at end of window because it is start of next window
+    dgrp_pos_in_window = [x for x in dgrp_pos if int(window_list[0]) <= x < int(window_list[1])]
     return window_list, dgrp_pos_in_window
 
 
-def snp_depths(positions_in_window, coverage_file):
-    window_coverage_list = list()
-    with open(f'{resource_dir}/{coverage_file}') as covf:
-        cov_dict = {int(line.split('\t')[1]): line for line in covf}
-    dgrp_coverage_data = list()
-    for position in positions_in_window:
-        dgrp_coverage_data.append(cov_dict[position])
-    return window_coverage_list
+def bed_file(contig, pos1, pos2, window_list, dgrp_pos_in_window):
+    covdir = cdir.coverage_dir(contig, pos1, pos2)
+    bedfile = f"{covdir}/{contig}_{window_list[0]}-{window_list[1]}.bed"
+    with open(bedfile, "w+") as bf:
+        for pos in dgrp_pos_in_window:
+            bf.write(f"{contig}\t{pos}\t{pos + 1}\t{pos}_SNP\n")
+    return bedfile
 
 
-def create_window_depth_files(contig, blue_print_window, coverage_file, coverage_directory):
-    sample = coverage_file.split('_')[1].split('.')[0]
-    window, snp_pos = snp_positions(contig, blue_print_window)
-    snp_cov = snp_depths(snp_pos, coverage_file)
-    output_name = '{}/{}-{}_{}.dat'.format(coverage_directory, window[0], window[1], sample)
-    with open(output_name, 'w+') as outputfile:
-        for outline in snp_cov:
-            outputfile.write(outline)
+def make_beds(contig, pos1, pos2):
+    wins = get_windows(contig, pos1, pos2)
+    bed_files_windows_list = list()
+    for win in wins:
+        win_list, dgrp_pos = snp_positions(contig, win)
+        b_file = bed_file(contig, pos1, pos2, win_list, dgrp_pos)
+        bed_files_windows_list.append(b_file)
+    return zip([contig] * len(wins), wins, bed_files_windows_list)
 
 
-def dgrp_coverage_files(contig, pos1, pos2):
-    windows = get_windows(contig, pos1, pos2)
-    cov_dir = cdir.coverage_dir(contig, pos1, pos2)
-    cov_files = listcoveragefiles.list_contig_files('2L')
-    print(cov_files)
-    for cov_file in cov_files:
-        for window in windows:
-            create_window_depth_files(contig, window, cov_file, cov_dir)
+def list_experimental_bams():
+    return glob.glob('harpsnp/resources/*.bam')
+
+
+def samtools_depth_commands(bed_files_window_tuple_list):
+    command_list = []
+    bam_files = list_experimental_bams()
+    for bam in bam_files:
+        for contig, win, bedf in bed_files_window_tuple_list:
+            bed_path = '/'.join(bedf.split('/')[:-1])
+            bam_sample = bam.split('/')[-1].split('_')[0]
+            output_file = f"{bed_path}/{bam_sample}_{contig}_{win[0]}-{win[1]}.coverage"
+            command = f'samtools depth -a {bam} -b {bedf} > {output_file}'
+            command_list.append(command)
+    return command_list
+    # subprocess.call(command, shell=True)
+
+
+def samtools_depth(command_input):
+    subprocess.call(command_input, shell=True)
+
+
+def samtools_depth_multi(bed_files_window_tuple_list):
+     pool = Pool(18)
+     commands = samtools_depth_commands(bed_files_window_tuple_list)
+     pool.map(samtools_depth, commands)
 
 
 if __name__ == '__main__':
     pass
-    # os.chdir('C://Users//ltjon/Data//Mel2018_Experimental_Haplotype_Graphs')
-    # begin = time.time()
-    cont = '2L'
-    posa = 500000
-    posb = 23093611
-    dgrp_coverage_files(cont, posa, posb)
-    win = get_windows(cont, posa, posb)
-    ps = snp_positions(cont, win[0])
-    covs = listcoveragefiles.list_contig_files('2L')
-
-    # end = time.time()
-    # print(end - begin)
+    # cont = '2L'
+    # posa = 500000
+    # posb = 23093611
+    # # # dgrp_coverage_files(cont, posa, posb)
+    # win = get_windows(cont, posa, posb)
+    # ps = snp_positions(cont, win[0])

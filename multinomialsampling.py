@@ -37,10 +37,10 @@ if __name__ == '__main__':
     # parser.add_argument("-e", '--end', help='end position')
     # parser.add_argument('-n', '--number', help='number of recombination simulations')
     # args = parser.parse_args()
-    cont = '3R'
-    posx = 4200000
-    posy = 32073015
-    main(cont, posx, posy, 20)
+    cont = '2R'
+    posx = 5000000
+    posy = 10000000
+    main(cont, posx, posy, 2)
     sim_fst(cont, posx, posy)
     expdivergence(cont, posx, posy)
     print("--- %s seconds ---" % (time.time() - start_time))

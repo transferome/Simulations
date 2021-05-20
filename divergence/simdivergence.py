@@ -13,6 +13,7 @@ def region_and_file(freqfile):
 
 def create_file(freqfile):
     reg, newf = region_and_file(freqfile)
+    print(newf)
     diverged_data = list()
     with open(freqfile) as f:
         data = [line.rstrip('\n').split(',')[1:] for line in f]

@@ -1,15 +1,13 @@
 import coverage.windowcoverage as depthtest
-import time
+import mytime.timer as timer
 
 
 if __name__ == '__main__':
-    begin = time.time()
-    cont = '2R'
+    # function_time = timer.Timer()
+    cont = '3R'
     posa = 4200000
-    posb = 25258235
-    depthtest.dgrp_coverage_files(cont, posa, posb)
-    end = time.time()
-    print(end - begin)
-
-
-
+    posb = 32073015
+    bed_windows = depthtest.make_beds(cont, posa, posb)
+    test_list = depthtest.samtools_depth_commands(bed_windows)
+    # function_time.stop()
+    # print(function_time.elapsed)
