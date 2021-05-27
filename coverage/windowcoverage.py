@@ -17,7 +17,7 @@ def get_windows(contig, pos1, pos2):
 def snp_positions(contig, blue_print_window):
     dgrp_pos = [int(line.split(',')[0]) for line in open(xfiles.snps[contig]) if not line.startswith(contig)]
     # the window will be a list of length two
-    window_list = blue_print_window.lstrip('{}:'.format(contig)).split('-')
+    window_list = blue_print_window.split(':')[-1].split('-')
     # not including SNP at end of window because it is start of next window
     dgrp_pos_in_window = [x for x in dgrp_pos if int(window_list[0]) <= x < int(window_list[1])]
     return window_list, dgrp_pos_in_window
@@ -34,26 +34,28 @@ def bed_file(contig, pos1, pos2, window_list, dgrp_pos_in_window):
 
 def make_beds(contig, pos1, pos2):
     wins = get_windows(contig, pos1, pos2)
-    bed_files_windows_list = list()
+    bed_files = list()
     for win in wins:
         win_list, dgrp_pos = snp_positions(contig, win)
         b_file = bed_file(contig, pos1, pos2, win_list, dgrp_pos)
-        bed_files_windows_list.append(b_file)
-    return zip([contig] * len(wins), wins, bed_files_windows_list)
+        bed_files.append(b_file)
+    return [contig] * len(wins), bed_files
 
 
 def list_experimental_bams():
     return glob.glob('harpsnp/resources/*.bam')
 
 
-def samtools_depth_commands(bed_files_window_tuple_list):
-    command_list = []
+def samtools_depth_commands(contig_list, bed_files_list):
+    command_list = list()
     bam_files = list_experimental_bams()
     for bam in bam_files:
-        for contig, win, bedf in bed_files_window_tuple_list:
+        for contig, bedf in zip(contig_list, bed_files_list):
+            bed_window = bedf.split('/')[-1].split('_')[1].split('.bed')[0]
             bed_path = '/'.join(bedf.split('/')[:-1])
             bam_sample = bam.split('/')[-1].split('_')[0]
-            output_file = f"{bed_path}/{bam_sample}_{contig}_{win[0]}-{win[1]}.coverage"
+            output_file = f"{bed_path}/{bam_sample}_{contig}_{bed_window.split('-')[0]}-" \
+                          f"{bed_window.split('-')[1]}.coverage"
             command = f'samtools depth -a {bam} -b {bedf} > {output_file}'
             command_list.append(command)
     return command_list
@@ -64,10 +66,10 @@ def samtools_depth(command_input):
     subprocess.call(command_input, shell=True)
 
 
-def samtools_depth_multi(bed_files_window_tuple_list):
-     pool = Pool(18)
-     commands = samtools_depth_commands(bed_files_window_tuple_list)
-     pool.map(samtools_depth, commands)
+def samtools_depth_multi(contig_list, bed_files_list):
+    pool = Pool(18)
+    commands = samtools_depth_commands(contig_list, bed_files_list)
+    pool.map(samtools_depth, commands)
 
 
 if __name__ == '__main__':

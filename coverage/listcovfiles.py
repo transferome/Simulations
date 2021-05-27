@@ -14,5 +14,11 @@ def list_contig_files(contig):
     return covfiles
 
 
+def listsubsetcov(sample, contig, pos1, pos2):
+    covfiles = glob.glob(f'results/{contig}_{pos1}-{pos2}/coverage/{sample}_{contig}_*.coverage')
+    covfiles.sort(key=lambda x: int(x.split('/')[-1].split('_')[-1].split('-')[0]))
+    return covfiles
+
+
 if __name__ == '__main__':
     pass
